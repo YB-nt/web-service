@@ -6,9 +6,6 @@ from sqlalchemy import select
 docs_url = "https://pynecone.io/docs/getting-started/introduction"
 filename = f"{config.app_name}/{config.app_name}.py"
 
-options = ["데이터 엔지니어", "백앤드", "MLops", "데이터 분석가"]
-
-
 class User(pc.Model,table=True):
     username:str
     password:str
@@ -69,8 +66,8 @@ class State(pc.State):
     def change(self, value):
         self.option = value
 
-    def on_check_username(self, id):
-        self.id = id
+    def on_check_username(self,username):
+        self.username = username
         self.id_underline = "2px solid green"
         self.box_height = "110px"
         self.id_status = True
@@ -128,17 +125,38 @@ def get_input_field(icon:str,placeholder:str,_type:str):
         height="45px",
 
     )
+
+def input_field(input_width, text_value, holder, func_change, _type):
+    return pc.input(
+        width=input_width,
+        value=text_value,
+        transition="width 0.5s ease 0.65",
+        placeholder=holder,
+        color="white",
+        border="None",
+        fontSize="11px",
+        fontWeight="semibold",
+        letter_spacing="0.5px",
+        focus_border_color="None",
+        type_=_type,
+        on_change=func_change,
+    )
+
 def input_box():
     return pc.container(
         pc.vstack(
             pc.container(
-                pc.input(
-                    placeholder='Enter your id',
-                    border="0px",
-                    focus_border_color="None",
+                pc.icon(
+                    tag='at_sign',
                     color="white",
-                    fontWeight="semibold",
                     fontSize='11px',
+                ),
+                input_field(
+                   width="300px",
+                   text_value= State.id_value,
+                   holder='Enter your id',
+                   func_change = lambda:State.on_check_username,
+                   _type ='text',
                 ),
                 padding="0px",
                 width="300px",
@@ -156,14 +174,17 @@ def input_box():
         pc.container(height="5px"),
         pc.vstack(
             pc.container(
-                pc.input(
-                    placeholder='Enter your password',
-                    border="0px",
-                    focus_border_color="None",
+                pc.icon(
+                    tag='lock',
                     color="white",
-                    fontWeight="semibold",
                     fontSize='11px',
-                    type_ ="password",
+                ),
+                input_field(
+                   width="300px",
+                   text_value= State.id_value,
+                   holder='Enter your id',
+                   func_change = lambda:State.on_check_username,
+                   _type ='password',
                 ),
                 padding="0px",
                 width="300px",
@@ -178,21 +199,6 @@ def input_box():
                     transition="opacity 0.8s, transform 0.65s ease",
             ),
         ),
-    )
-
-def input_field(input_width, text_value, holder, func_change, _type):
-    return pc.input(
-        width=input_width,
-        value=text_value,
-        transition="width 0.5s ease 0.65",
-        placeholder=holder,
-        color="white",
-        border="None",
-        fontSize="13px",
-        letter_spacing="0.5px",
-        focus_border_color="None",
-        type_=_type,
-        on_change=func_change,
     )
 
 def sign_up_event(_username,_password):
